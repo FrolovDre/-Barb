@@ -1,0 +1,749 @@
+# =========================================
+# Project: "Glow Trip" — Casual Idle/Clicker (HTML5)
+# =========================================
+# File: index.html
+# -----------------------------------------
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Glow Trip — Эда едет к Серкану</title>
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="description" content="Лёгкий idle/clicker в глам-поп эстетике: собирай Сияние стилем, покупай вещи, ускоряй поездку к встрече с другом." />
+</head>
+<body>
+  <a class="skip-link" href="#main" tabindex="0">Пропустить к контенту</a>
+  <header class="topbar" role="banner" aria-label="Статус и заголовок">
+    <div class="brand">
+      <!-- Inline SVG logo placeholder -->
+      <svg aria-hidden="true" class="logo" width="28" height="28" viewBox="0 0 28 28">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#ff80bf"/>
+            <stop offset="1" stop-color="#b388ff"/>
+          </linearGradient>
+        </defs>
+        <circle cx="14" cy="14" r="13" fill="url(#g)"/>
+        <path d="M9 16c2 2 8 0 10-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+      <h1>Glow Trip</h1>
+    </div>
+    <div class="counters" role="status" aria-live="polite">
+      <div class="counter">
+        <span class="label" data-i18n="counter.glow">Сияние</span>
+        <span id="glowCount" class="value">0</span>
+      </div>
+      <div class="counter">
+        <span class="label" data-i18n="counter.perClick">к/клик</span>
+        <span id="perClick" class="value">0</span>
+      </div>
+      <div class="counter">
+        <span class="label" data-i18n="counter.perSecond">к/сек</span>
+        <span id="perSecond" class="value">0</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="layout" role="main">
+    <section class="play column" aria-label="Игровая зона">
+      <div id="hero" class="hero" role="button" tabindex="0" aria-pressed="false" aria-label="Собрать стиль кликом">
+        <!-- Minimal stylized character (CSS + SVG) -->
+        <svg class="eda" width="180" height="220" viewBox="0 0 180 220" aria-hidden="true">
+          <defs>
+            <linearGradient id="skin" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#ffd6e7"/>
+              <stop offset="1" stop-color="#ffc4dd"/>
+            </linearGradient>
+            <linearGradient id="dress" x1="0" x2="1">
+              <stop offset="0" stop-color="#ff8ad4"/>
+              <stop offset="1" stop-color="#b29bff"/>
+            </linearGradient>
+          </defs>
+          <circle cx="90" cy="55" r="28" fill="url(#skin)"/>
+          <rect x="58" y="85" width="64" height="85" rx="18" fill="url(#dress)"/>
+          <circle cx="77" cy="50" r="4" fill="#333"/>
+          <circle cx="103" cy="50" r="4" fill="#333"/>
+          <path d="M78 64c6 6 18 6 24 0" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M56 40c16-18 60-18 76 0" stroke="#ff8ad4" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <rect x="60" y="170" width="20" height="18" rx="6" fill="#333"/>
+          <rect x="100" y="170" width="20" height="18" rx="6" fill="#333"/>
+          <!-- Sparkle group -->
+          <g id="sparkles" class="sparkles">
+            <path d="M10 10l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#fff" opacity="0.9"/>
+            <path d="M160 40l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" fill="#fff" opacity="0.9"/>
+          </g>
+        </svg>
+        <button id="clickBtn" class="click-btn" aria-label="Собрать стиль" data-i18n="cta.click">Собрать стиль</button>
+      </div>
+
+      <div class="trip" aria-label="Поездка к встрече">
+        <div class="trip-head">
+          <span data-i18n="trip.toFriend">Путь к встрече с Серканом</span>
+          <span id="tripPercent" class="trip-percent">0%</span>
+        </div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс поездки">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <div class="boosts" id="activeBoosts" aria-label="Активные эффекты/ивенты"></div>
+      </div>
+    </section>
+
+    <section class="panel column" aria-label="Панели управления">
+      <div class="tabs" role="tablist" aria-label="Разделы">
+        <button class="tab active" data-tab="shop" role="tab" aria-selected="true" id="tab-shop" data-i18n="tab.shop">Магазин</button>
+        <button class="tab" data-tab="achievements" role="tab" aria-selected="false" id="tab-achievements" data-i18n="tab.achievements">Достижения</button>
+        <button class="tab" data-tab="settings" role="tab" aria-selected="false" id="tab-settings" data-i18n="tab.settings">Настройки</button>
+      </div>
+
+      <div class="tab-panels">
+        <div class="panel-body active" data-panel="shop" role="tabpanel" aria-labelledby="tab-shop">
+          <div id="shopCategories" class="shop-categories"></div>
+          <div id="shopList" class="shop-list" aria-live="polite"></div>
+        </div>
+
+        <div class="panel-body" data-panel="achievements" role="tabpanel" aria-labelledby="tab-achievements">
+          <div id="achievementsList" class="achievements-list" aria-live="polite"></div>
+        </div>
+
+        <div class="panel-body" data-panel="settings" role="tabpanel" aria-labelledby="tab-settings">
+          <div class="settings">
+            <div class="setting">
+              <label><input type="checkbox" id="toggleSound" /> <span data-i18n="settings.sound">Звук</span></label>
+            </div>
+            <div class="setting">
+              <label><input type="checkbox" id="toggleAnim" /> <span data-i18n="settings.animations">Анимации</span></label>
+            </div>
+            <div class="setting">
+              <label><input type="checkbox" id="toggleHC" /> <span data-i18n="settings.highContrast">Высокая контрастность</span></label>
+            </div>
+            <div class="setting">
+              <label for="langSelect" data-i18n="settings.language">Язык</label>
+              <select id="langSelect" aria-label="Выбор языка">
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="setting buttons">
+              <button id="btnSave" class="secondary" data-i18n="settings.save">Сохранить</button>
+              <button id="btnExport" class="secondary" data-i18n="settings.export">Экспорт JSON</button>
+              <label class="file-btn">
+                <input type="file" id="fileImport" accept="application/json" />
+                <span data-i18n="settings.import">Импорт JSON</span>
+              </label>
+              <button id="btnReset" class="danger" data-i18n="settings.reset">Сброс прогресса</button>
+            </div>
+            <p class="hint" data-i18n="settings.hint">Экспорт сохраняет файл с вашим прогрессом. Импорт восстановит игру из файла.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bottombar" role="contentinfo">
+    <span data-i18n="footer.hint">Совет: нажимайте Пробел/Enter для клика. Долгое зажатие не ускоряет набор.</span>
+  </footer>
+
+  <!-- Inline JSON fallbacks to allow running directly from file:// (no server). -->
+  <!-- Runtime will prefer external files in assets/data/* if fetch() succeeds; otherwise parse these. -->
+
+  <script type="application/json" id="items-data">
+  {
+    "items": [
+      { "key": "dress_spark", "category": "clothes", "name": {"ru": "Платье «Искра»", "en": "Spark Dress"}, "desc": {"ru": "Добавляет сияние за клик.", "en": "Adds glow per click."}, "basePrice": 10, "maxLevel": 50, "effects": {"perClickAdd": 1, "perClickMult": 0.02} },
+      { "key": "heels_glide", "category": "clothes", "name": {"ru": "Туфли «Скользящая походка»", "en": "Glide Heels"}, "desc": {"ru": "Немного ускоряют поездку.", "en": "Slightly speed up the trip."}, "basePrice": 35, "maxLevel": 40, "effects": {"tripSpeedMult": 0.03} },
+      { "key": "bag_gloss", "category": "accessories", "name": {"ru": "Сумка «Глянец»", "en": "Gloss Bag"}, "desc": {"ru": "Чуть повышает шанс события.", "en": "Slightly increases event chance."}, "basePrice": 50, "maxLevel": 20, "effects": {"eventChance": 0.002} },
+      { "key": "shades_star", "category": "accessories", "name": {"ru": "Очки «Звезда»", "en": "Star Shades"}, "desc": {"ru": "Продлевает действие бустов.", "en": "Extends boost durations."}, "basePrice": 90, "maxLevel": 15, "effects": {"boostDurationMult": 0.05} },
+      { "key": "scooter_cute", "category": "transport", "name": {"ru": "Самокат «Мимишный»", "en": "Cute Scooter"}, "desc": {"ru": "Повышает скорость поездки и доход в секунду.", "en": "Trip speed and glow per second."}, "basePrice": 120, "maxLevel": 25, "effects": {"tripSpeedMult": 0.06, "perSecondAdd": 0.5} },
+      { "key": "cabrio_breeze", "category": "transport", "name": {"ru": "Кабриолет «Бриз»", "en": "Breeze Cabrio"}, "desc": {"ru": "Серьёзный прирост скорости и пассивного дохода.", "en": "Strong speed & passive income."}, "basePrice": 600, "maxLevel": 20, "effects": {"tripSpeedMult": 0.12, "perSecondAdd": 2} },
+      { "key": "limo_lux", "category": "transport", "name": {"ru": "Лимузин «Люкс»", "en": "Lux Limo"}, "desc": {"ru": "Мощный прирост скорости и пассивного дохода.", "en": "Big speed & passive income."}, "basePrice": 2500, "maxLevel": 10, "effects": {"tripSpeedMult": 0.25, "perSecondAdd": 6} },
+      { "key": "makeup_glowup", "category": "cosmetics", "name": {"ru": "Глоу-ап", "en": "Glow Up"}, "desc": {"ru": "Временный ×2 к доходу на 30с.", "en": "Temporary ×2 income for 30s."}, "basePrice": 150, "maxLevel": 5, "effects": {"activeBoost": {"type": "multIncome", "mult": 2, "duration": 30}} }
+    ]
+  }
+  </script>
+
+  <script type="application/json" id="events-data">
+  {
+    "events": [
+      { "key": "sale", "name": {"ru": "Фешн-распродажа", "en": "Fashion Sale"}, "chance": 0.02, "duration": 60, "cooldown": 120, "effects": {"shopDiscount": 0.2} },
+      { "key": "traffic", "name": {"ru": "Пробка", "en": "Traffic"}, "chance": 0.015, "duration": 45, "cooldown": 90, "effects": {"tripSpeedMultiplier": 0.7} },
+      { "key": "hype", "name": {"ru": "Соцсети хайп", "en": "Social Hype"}, "chance": 0.01, "duration": 30, "cooldown": 120, "effects": {"perClickMultiplier": 2} },
+      { "key": "rain", "name": {"ru": "Дождь", "en": "Rain"}, "chance": 0.012, "duration": 30, "cooldown": 120, "effects": {"shoesDisabled": true, "superEventChance": 0.15} }
+    ]
+  }
+  </script>
+
+  <script type="application/json" id="achievements-data">
+  {
+    "achievements": [
+      { "key": "first_look", "name": {"ru": "Первый образ", "en": "First Look"}, "desc": {"ru": "Купите 3 предмета из разных категорий.", "en": "Buy 3 items from different categories."}, "condition": {"type": "buyDistinct", "count": 3}, "reward": {"perClickAdd": 1} },
+      { "key": "gloss_magnate", "name": {"ru": "Глянец-магнат", "en": "Gloss Magnate"}, "desc": {"ru": "Накопите 100 000 Сияния суммарно.", "en": "Accumulate 100,000 total Glow."}, "condition": {"type": "totalGlow", "value": 100000}, "reward": {"perSecondAdd": 3} },
+      { "key": "lightspeed", "name": {"ru": "Скорость света", "en": "Lightspeed"}, "desc": {"ru": "Заполните поездку < 2 минут с начала цикла.", "en": "Finish a trip in under 2 minutes."}, "condition": {"type": "tripTimeLess", "seconds": 120}, "reward": {"tripSpeedMult": 0.05} },
+      { "key": "collector", "name": {"ru": "Коллекционер", "en": "Collector"}, "desc": {"ru": "Откройте 10 уникальных предметов.", "en": "Own 10 unique items."}, "condition": {"type": "uniqueItems", "count": 10}, "reward": {"perClickMult": 0.05} },
+      { "key": "event_hunter", "name": {"ru": "Ивент-хантер", "en": "Event Hunter"}, "desc": {"ru": "Активируйте 20 событий.", "en": "Activate 20 events."}, "condition": {"type": "eventsActivated", "count": 20}, "reward": {"eventChance": 0.003} },
+      { "key": "ride_5", "name": {"ru": "Пилот заезда", "en": "Ride Pilot"}, "desc": {"ru": "Завершите 5 поездок.", "en": "Complete 5 trips."}, "condition": {"type": "tripsCompleted", "count": 5}, "reward": {"perSecondAdd": 2} },
+      { "key": "ride_15", "name": {"ru": "Гонщица", "en": "Racer"}, "desc": {"ru": "Завершите 15 поездок.", "en": "Complete 15 trips."}, "condition": {"type": "tripsCompleted", "count": 15}, "reward": {"perClickAdd": 2} },
+      { "key": "spender", "name": {"ru": "Шопоголик", "en": "Shopper"}, "desc": {"ru": "Потратьте 10 000 Сияния.", "en": "Spend 10,000 Glow."}, "condition": {"type": "spentGlow", "value": 10000}, "reward": {"shopDiscount": 0.05} },
+      { "key": "boost_love", "name": {"ru": "Любитель бустов", "en": "Boost Lover"}, "desc": {"ru": "Активируйте 10 бустов.", "en": "Use 10 boosts."}, "condition": {"type": "boostsUsed", "count": 10}, "reward": {"boostDurationMult": 0.1} },
+      { "key": "no_shoes_rain", "name": {"ru": "Танец под дождём", "en": "Dancing in Rain"}, "desc": {"ru": "Завершите поездку во время события «Дождь».", "en": "Finish a trip during the Rain event."}, "condition": {"type": "tripDuringEvent", "eventKey": "rain"}, "reward": {"perSecondAdd": 1} }
+    ]
+  }
+  </script>
+
+  <script type="application/json" id="i18n-ru">
+  {
+    "counter": { "glow": "Сияние", "perClick": "к/клик", "perSecond": "к/сек" },
+    "cta": { "click": "Собрать стиль" },
+    "trip": { "toFriend": "Путь к встрече с Серканом", "complete": "Встреча! Бонус: +{bonus}", "restart": "Новый заезд начался." },
+    "tab": { "shop": "Магазин", "achievements": "Достижения", "settings": "Настройки" },
+    "shop": { "category": { "clothes": "Одежда", "accessories": "Аксессуары", "transport": "Транспорт", "cosmetics": "Косметика" },
+              "buy": "Купить",
+              "owned": "Ур.",
+              "price": "Цена",
+              "activeBoost": "Активировать буст" },
+    "ach": { "locked": "Скрыто", "reward": "Награда" },
+    "settings": {
+      "sound": "Звук",
+      "animations": "Анимации",
+      "highContrast": "Высокая контрастность",
+      "language": "Язык",
+      "save": "Сохранить",
+      "export": "Экспорт JSON",
+      "import": "Импорт JSON",
+      "reset": "Сброс прогресса",
+      "hint": "Экспорт сохраняет файл с вашим прогрессом. Импорт восстановит игру из файла."
+    },
+    "footer": { "hint": "Совет: нажимайте Пробел/Enter для клика. Долгое зажатие не ускоряет набор." }
+  }
+  </script>
+
+  <script type="application/json" id="i18n-en">
+  {
+    "counter": { "glow": "Glow", "perClick": "g/click", "perSecond": "g/sec" },
+    "cta": { "click": "Collect Style" },
+    "trip": { "toFriend": "Trip to meet Serkan", "complete": "Meet-up! Bonus: +{bonus}", "restart": "New ride started." },
+    "tab": { "shop": "Shop", "achievements": "Achievements", "settings": "Settings" },
+    "shop": { "category": { "clothes": "Clothes", "accessories": "Accessories", "transport": "Transport", "cosmetics": "Cosmetics" },
+              "buy": "Buy",
+              "owned": "Lv.",
+              "price": "Price",
+              "activeBoost": "Activate Boost" },
+    "ach": { "locked": "Hidden", "reward": "Reward" },
+    "settings": {
+      "sound": "Sound",
+      "animations": "Animations",
+      "highContrast": "High Contrast",
+      "language": "Language",
+      "save": "Save",
+      "export": "Export JSON",
+      "import": "Import JSON",
+      "reset": "Reset Progress",
+      "hint": "Export downloads your save. Import restores from file."
+    },
+    "footer": { "hint": "Tip: press Space/Enter to click. Holding does not speed up." }
+  }
+  </script>
+
+  <!-- JS Modules -->
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
+
+# -----------------------------------------
+# File: styles.css
+# -----------------------------------------
+:root{
+  --bg: #fff7fb;
+  --card: #ffe8f7;
+  --card-2:#efe9ff;
+  --ink:#2b1a2b;
+  --muted:#6a4c6a;
+  --accent:#ff8ad4;
+  --accent-2:#b29bff;
+  --ok:#28b487;
+  --warn:#f59e0b;
+  --danger:#ef4444;
+  --hc-bg:#111;
+  --hc-ink:#fff;
+  --hc-accent:#ff80bf;
+  --radius:18px;
+  --shadow: 0 8px 24px rgba(178,155,255,.25), 0 2px 6px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color:var(--ink);
+  background: radial-gradient(1200px 800px at 20% -10%, #ffe6f6, transparent),
+              radial-gradient(1200px 800px at 120% 20%, #efe6ff, transparent),
+              var(--bg);
+}
+.high-contrast body, body.high-contrast{
+  background: var(--hc-bg);
+  color: var(--hc-ink);
+}
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{left:8px;top:8px;z-index:999;padding:8px 12px;background:#000;color:#fff;border-radius:10px}
+
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:linear-gradient(90deg,var(--card),var(--card-2));
+  box-shadow:var(--shadow); position:sticky; top:0; z-index:5;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .logo{filter:drop-shadow(0 4px 8px rgba(0,0,0,.12))}
+.counters{display:flex;gap:16px}
+.counter{background:#fff; padding:8px 12px;border-radius:12px;box-shadow:var(--shadow);min-width:120px;display:flex;flex-direction:column;align-items:flex-start}
+.counter .label{font-size:12px;color:var(--muted)}
+.counter .value{font-weight:700;font-size:18px}
+
+.layout{
+  display:grid; grid-template-columns: 1.1fr 1fr; gap:18px; padding:18px; max-width:1200px; margin:0 auto;
+}
+.column{background:linear-gradient(180deg,#fff, #fff0), #fff9; border-radius:var(--radius); box-shadow:var(--shadow); padding:16px}
+.hero{display:grid; place-items:center; gap:10px; padding:12px; border-radius:var(--radius); background:linear-gradient(180deg, #ffeaf8, #f0eaff)}
+.hero:active{transform:translateY(1px)}
+.eda{display:block; filter:drop-shadow(0 6px 20px rgba(178,155,255,.45))}
+.sparkles path{animation: twinkle 2.5s infinite ease-in-out alternate}
+@keyframes twinkle{ to{ transform:scale(1.2) rotate(12deg); opacity:.6} }
+.click-btn{
+  appearance:none; border:0; padding:14px 18px; border-radius:999px; font-weight:800; letter-spacing:.2px;
+  background-image: linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:white; cursor:pointer; box-shadow:var(--shadow); transform: translateZ(0);
+}
+.click-btn:active{transform:scale(.98)}
+.no-anim .click-btn, .no-anim .sparkles path{animation:none}
+
+.trip-head{display:flex;justify-content:space-between; margin:6px 0 8px; color:var(--muted); font-weight:600}
+.progress{height:16px;background:#f7f0ff;border-radius:999px; overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.06)}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .25s ease}
+.no-anim .progress-fill{transition:none}
+.boosts{display:flex;flex-wrap:wrap; gap:6px; margin-top:8px}
+.boost{padding:6px 8px;border-radius:999px;background:#fff;border:1px solid #eee;font-size:12px;box-shadow:var(--shadow)}
+.boost.positive{border-color:#a7f3d0}
+.boost.negative{border-color:#fecaca}
+
+.tabs{display:flex;gap:8px}
+.tab{padding:10px 14px;border-radius:999px;border:0;background:#eee;cursor:pointer;font-weight:700}
+.tab.active{background:linear-gradient(90deg,#ffd0ef,#d8d0ff); color:#3b0764}
+.panel-body{display:none;margin-top:12px}
+.panel-body.active{display:block}
+.shop-categories{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.shop-cat{padding:8px 12px;border-radius:999px;background:#fff;border:1px solid #eee;cursor:pointer}
+.shop-cat.active{background:linear-gradient(90deg,#ffd0ef,#d8d0ff)}
+
+.shop-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{background:#fff;border-radius:16px;padding:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.card .title{font-weight:800}
+.card .desc{font-size:13px;color:var(--muted)}
+.card .meta{display:flex;justify-content:space-between;align-items:center}
+.badge{font-size:12px;padding:4px 8px;border-radius:999px;background:#f3e8ff}
+.price{font-weight:700}
+.actions{display:flex;gap:8px;align-items:center}
+button.secondary{padding:8px 10px;border-radius:10px;border:0;background:#f1f5f9;cursor:pointer}
+button.buy{padding:8px 12px;border-radius:10px;border:0;background:linear-gradient(90deg,#ff9fdc,#b7a8ff);color:#fff;cursor:pointer}
+button.danger{background:linear-gradient(90deg,#f87171,#fb7185);color:white;border:0;border-radius:10px;padding:8px 12px}
+.file-btn{display:inline-flex;align-items:center;gap:8px;background:#eef2ff;padding:8px 12px;border-radius:10px;cursor:pointer}
+.file-btn input{display:none}
+
+.achievements-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.ach{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:12px}
+.ach.locked{filter:grayscale(1);opacity:.7}
+.ach .title{font-weight:800}
+.ach .desc{font-size:13px;color:var(--muted)}
+.ach .reward{font-size:12px}
+.bottombar{padding:10px 16px;color:#6b7280;text-align:center}
+
+@media (max-width: 960px){
+  .layout{grid-template-columns:1fr}
+  .counters{gap:8px}
+}
+
+.high-contrast .topbar, .high-contrast .column, body.high-contrast .column{
+  background:#000;color:#fff;border:2px solid #fff;
+}
+.high-contrast .progress{background:#333}
+.high-contrast .progress-fill{background:#fff}
+
+#notif{position:fixed;right:16px;bottom:16px;background:#111;color:#fff;padding:10px 12px;border-radius:10px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;pointer-events:none}
+#notif.show{opacity:1;transform:translateY(0)}
+
+#sr-live{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+
+# -----------------------------------------
+# File: src/gameState.js
+# -----------------------------------------
+/**
+ * @module gameState
+ * Централизованное состояние и сохранение.
+ */
+
+export const SAVE_KEY = "glowtrip_save_v1";
+
+/**
+ * Создаёт новое состояние по умолчанию.
+ * @returns {import('./types').GameState}
+ */
+export function defaultState() {
+  const now = Date.now();
+  return {
+    version: 1,
+    glow: 0,
+    spentGlow: 0,
+    totalGlowEarned: 0,
+    perClickBase: 1,
+    perClickBonus: 0,
+    perClickMult: 1,
+    perSecondBase: 0,
+    perSecondBonus: 0,
+    perSecondMult: 1,
+    eventChanceBonus: 0,
+    boostDurationMult: 0,
+    shopDiscountExtra: 0,
+    trip: {
+      progress: 0,           // 0..1
+      speedBase: 0.12,       // fraction per second
+      speedBonus: 0,
+      speedMult: 1,
+      startedAt: now,
+      lastFinishDuringEvent: null
+    },
+    activeEvents: [],         // [{key, timeLeft, effects}]
+    cooldowns: {},            // {eventKey: secondsLeft}
+    inventory: {},            // {itemKey: level}
+    boostsUsed: 0,
+    stats: {
+      eventsActivated: 0,
+      tripsCompleted: 0
+    },
+    achievements: {},         // {key: {unlockedAt:number}}
+    settings: {
+      sound: true,
+      animations: true,
+      highContrast: false,
+      locale: 'ru'
+    },
+    run: {
+      lastTick: performance.now(),
+      saveTimer: 0
+    }
+  };
+}
+
+/**
+ * Глубокая копия простых объектов.
+ */
+function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+/**
+ * Загружает сохранение из localStorage.
+ * @returns {import('./types').GameState}
+ */
+export function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    // миграции версий можно добавить тут
+    return Object.assign(defaultState(), parsed);
+  } catch {
+    return defaultState();
+  }
+}
+
+/**
+ * Сохраняет состояние в localStorage.
+ * @param {import('./types').GameState} state 
+ */
+export function saveState(state) {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch {}
+}
+
+/**
+ * Экспорт в JSON-строку.
+ * @param {import('./types').GameState} state 
+ * @returns {string}
+ */
+export function exportState(state){
+  const snapshot = deepClone(state);
+  return JSON.stringify(snapshot, null, 2);
+}
+
+/**
+ * Импорт из JSON-строки.
+ * @param {string} json 
+ * @returns {import('./types').GameState}
+ */
+export function importState(json){
+  const parsed = JSON.parse(json);
+  const base = defaultState();
+  return Object.assign(base, parsed);
+}
+
+/**
+ * Полный сброс.
+ * @returns {import('./types').GameState}
+ */
+export function resetState(){
+  return defaultState();
+}
+
+# -----------------------------------------
+# File: src/economy.js
+# -----------------------------------------
+/**
+ * @module economy
+ * Чистые функции экономики и подсчётов.
+ */
+
+/**
+ * Возвращает цену уровня для предмета.
+ * Формула: basePrice * 1.15^level (level начиная с 0 -> цена за следующий).
+ * @param {number} basePrice 
+ * @param {number} level 
+ */
+export function priceFor(basePrice, level){
+  return Math.ceil(basePrice * Math.pow(1.15, level));
+}
+
+/**
+ * Пересчитывает derived-поля дохода/скорости на основе инвентаря и ивентов.
+ * @param {import('./types').GameState} state 
+ * @param {{items:any[], events:any[]}} data
+ */
+export function recalcDerived(state, data){
+  // Базовые значения
+  let perClickAdd = state.perClickBase;
+  let perClickMult = 1 + state.perClickMult - 1; // для ясности
+  let perSecondAdd = state.perSecondBase;
+  let perSecondMult = 1 + state.perSecondMult - 1;
+  let eventChance = state.eventChanceBonus; // абсолютная добавка к шансу
+  let boostDurMult = state.boostDurationMult;
+  let tripSpeed = state.trip.speedBase;
+  let shopDiscount = state.shopDiscountExtra;
+
+  // Эффекты инвентаря
+  for (const item of data.items) {
+    const level = state.inventory[item.key] || 0;
+    if (level <= 0) continue;
+    const eff = item.effects || {};
+    const lvl = level;
+    if (eff.perClickAdd) perClickAdd += eff.perClickAdd * lvl;
+    if (eff.perClickMult) perClickMult += eff.perClickMult * lvl;
+    if (eff.perSecondAdd) perSecondAdd += eff.perSecondAdd * lvl;
+    if (eff.perSecondMult) perSecondMult += eff.perSecondMult * lvl;
+    if (eff.tripSpeedMult) tripSpeed += state.trip.speedBase * eff.tripSpeedMult * lvl;
+    if (eff.eventChance) eventChance += eff.eventChance * lvl;
+    if (eff.boostDurationMult) boostDurMult += eff.boostDurationMult * lvl;
+    if (eff.shopDiscount) shopDiscount += eff.shopDiscount * lvl;
+  }
+
+  // Эффекты активных ивентов
+  for (const ev of state.activeEvents) {
+    const efx = ev.effects || {};
+    if (efx.perClickMultiplier) perClickMult *= efx.perClickMultiplier;
+    if (efx.perSecondMultiplier) perSecondMult *= efx.perSecondMultiplier;
+    if (efx.tripSpeedMultiplier) tripSpeed *= efx.tripSpeedMultiplier;
+    if (efx.shopDiscount) shopDiscount += efx.shopDiscount;
+  }
+
+  // Дождь: отключает бонус обуви (пример реализации — вычтем эффект обуви)
+  const isRain = state.activeEvents.some(e => e.key === 'rain' && e.effects?.shoesDisabled);
+  if (isRain) {
+    for (const item of data.items) {
+      if (item.category === 'clothes' && item.key.includes('heels')) {
+        const lvl = state.inventory[item.key] || 0;
+        if (lvl > 0 && item.effects?.tripSpeedMult) {
+          tripSpeed -= state.trip.speedBase * item.effects.tripSpeedMult * lvl;
+        }
+      }
+    }
+  }
+
+  // Границы и финал
+  state.perClickBonus = Math.max(0, perClickAdd);
+  state.perClickMult = Math.max(0.1, perClickMult);
+  state.perSecondBonus = Math.max(0, perSecondAdd);
+  state.perSecondMult = Math.max(0.1, perSecondMult);
+  state.trip.speedBonus = Math.max(0, tripSpeed - state.trip.speedBase);
+  state.eventChanceBonus = Math.max(0, eventChance);
+  state.boostDurationMult = Math.max(0, boostDurMult);
+  state.shopDiscountExtra = Math.min(0.9, Math.max(0, shopDiscount)); // не более 90% скидки
+}
+
+/**
+ * Текущий доход за клик.
+ * @param {import('./types').GameState} state 
+ */
+export function currentPerClick(state){
+  return Math.max(0, (state.perClickBonus) * state.perClickMult);
+}
+
+/**
+ * Текущий доход в секунду.
+ * @param {import('./types').GameState} state 
+ */
+export function currentPerSecond(state){
+  return Math.max(0, (state.perSecondBonus) * state.perSecondMult);
+}
+
+/**
+ * Текущая скорость поездки (доля в сек).
+ * @param {import('./types').GameState} state 
+ */
+export function currentTripSpeed(state){
+  return Math.max(0.001, (state.trip.speedBase + state.trip.speedBonus) * state.trip.speedMult);
+}
+
+# -----------------------------------------
+# File: src/events.js
+# -----------------------------------------
+/**
+ * @module events
+ * Случайные ивенты, таймеры и кулдауны.
+ */
+
+/**
+ * Пытается активировать новое событие раз в секунду.
+ * @param {import('./types').GameState} state 
+ * @param {{events:any[]}} data 
+ * @param {number} dtSec 
+ * @param {(e:{key:string,name:any,duration:number,effects:any})=>void} onActivate 
+ */
+export function tickEvents(state, data, dtSec, onActivate){
+  // уменьшение кулдаунов
+  for (const k of Object.keys(state.cooldowns)) {
+    state.cooldowns[k] = Math.max(0, state.cooldowns[k] - dtSec);
+    if (state.cooldowns[k] === 0) delete state.cooldowns[k];
+  }
+  // уменьшение таймеров активных
+  for (let i = state.activeEvents.length - 1; i >= 0; i--) {
+    const e = state.activeEvents[i];
+    e.timeLeft -= dtSec;
+    if (e.timeLeft <= 0) {
+      state.activeEvents.splice(i,1);
+    }
+  }
+
+  // Пассивный шанс (суммируется из предметов и др.)
+  const basePerSec = 0.005; // 0.5%/сек базовый
+  const totalChance = basePerSec + (state.eventChanceBonus || 0);
+  // Пробуем ровно 1 раз в секунду — используем dtSec аккумуляцию снаружи
+  // Здесь просто бросок: чем больше dtSec, тем выше шанс
+  const rollProb = 1 - Math.pow(1 - totalChance, dtSec); // корректно с дельтой времени
+  if (Math.random() < rollProb) {
+    // Выберем событие по их шансам, исключая кулдауны и уже активные того же типа
+    const pool = data.events.filter(ev => !state.cooldowns[ev.key] && !state.activeEvents.some(a => a.key === ev.key));
+    if (pool.length === 0) return;
+    const totalW = pool.reduce((s,e)=>s+(e.chance||0.01),0);
+    let r = Math.random()*totalW;
+    let chosen = pool[0];
+    for (const ev of pool) {
+      r -= (ev.chance||0.01);
+      if (r<=0){ chosen = ev; break; }
+    }
+    // Активируем
+    const duration = applyBoostDuration(state, chosen.duration || 30);
+    const effects = Object.assign({}, chosen.effects||{});
+    state.activeEvents.push({ key: chosen.key, name: chosen.name, timeLeft: duration, effects });
+    state.cooldowns[chosen.key] = (chosen.cooldown || (duration*2));
+    state.stats.eventsActivated += 1;
+    onActivate && onActivate({key:chosen.key,name:chosen.name,duration,effects});
+  }
+}
+
+/** Применяет глобальный множитель длительности бустов. */
+function applyBoostDuration(state, dur){
+  const mult = 1 + (state.boostDurationMult || 0);
+  return dur * mult;
+}
+
+# -----------------------------------------
+# File: src/achievements.js
+# -----------------------------------------
+/**
+ * @module achievements
+ * Трекинг и выдача достижений.
+ */
+
+/**
+ * Проверяет и открывает достижения.
+ * @param {import('./types').GameState} state 
+ * @param {{achievements:any[]}} data 
+ * @param {(a:any)=>void} onUnlock 
+ */
+export function checkAchievements(state, data, onUnlock){
+  for (const a of data.achievements) {
+    if (state.achievements[a.key]) continue; // уже открыто
+    if (meets(state, a.condition)) {
+      state.achievements[a.key] = { unlockedAt: Date.now() };
+      applyReward(state, a.reward || {});
+      onUnlock && onUnlock(a);
+    }
+  }
+}
+
+/** Условия. */
+function meets(state, cond){
+  if (!cond) return false;
+  switch(cond.type){
+    case 'buyDistinct': {
+      const ownedKeys = Object.keys(state.inventory).filter(k => state.inventory[k] > 0);
+      const cats = new Set(ownedKeys.map(k => k.split('_')[0])); // простая эвристика category из key
+      return cats.size >= (cond.count||1);
+    }
+    case 'totalGlow':
+      return state.totalGlowEarned >= (cond.value||0);
+    case 'tripsCompleted':
+      return state.stats.tripsCompleted >= (cond.count||1);
+    case 'tripTimeLess':
+      if (!state._lastTripTime) return false;
+      return state._lastTripTime <= (cond.seconds||999999);
+    case 'uniqueItems': {
+      const c = Object.keys(state.inventory).filter(k => (state.inventory[k]||0) > 0).length;
+      return c >= (cond.count||1);
+    }
+    case 'eventsActivated':
+      return state.stats && state.stats.eventsActivated >= (cond.count||1);
+    case 'spentGlow':
+      return state.spentGlow >= (cond.value||0);
+    case 'boostsUsed':
+      return (state.boostsUsed||0) >= (cond.count||1);
+    case 'tripDuringEvent': {
+      const last = state.trip.lastFinishDuringEvent;
+      return last === cond.eventKey;
+    }
+    default: return false;
+  }
+}
+
+/** Награды достижения. */
+function applyReward(state, reward){
+  if (reward.perClickAdd) state.perClickBase += reward.perClickAdd;
+  if (reward.perClickMult) state.perClickMult += reward.perClickMult;
+  if (reward.perSecondAdd) state.perSecondBase += reward.perSecondAdd;
+  if (reward.perSecondMult) state.perSecondMult += reward.perSecondMult;
+  if (reward.tripSpeedMult) state.trip.speedMult += reward.tripSpeedMult;
+  if (reward.eventChance) state.eventChanceBonus += reward.eventChance;
+  if (reward.boostDurationMult) state.boostDurationMult += reward.boostDurationMult;
+  if (reward.shopDiscount) state.shopDiscountExtra += reward.shopDiscount;
+}
+
+# -----------------------------------------
+# File: src/store.js
+# -----------------------------------------
+/**
+ * @module store
+ * Магазин и покупки.
+ */
+import { priceFor, recalcDerived } from './economy.js';
+
+/**
+ * Покупка предмета.
+ * @param {import('./types').GameState} state 
+ * @param {{items:any[]}} data 
+ * @param {string} key 
+ * @returns {{ok:boolean, reason?:string, newLevel?:number, price?:numb*
