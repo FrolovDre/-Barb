@@ -1,0 +1,24 @@
+{
+  "counter": { "glow": "Glow", "perClick": "g/click", "perSecond": "g/sec" },
+  "cta": { "click": "Collect Style" },
+  "trip": { "toFriend": "Trip to meet Serkan", "complete": "Meet-up! Bonus: +{bonus}", "restart": "New ride started." },
+  "tab": { "shop": "Shop", "achievements": "Achievements", "settings": "Settings" },
+  "shop": { "category": { "clothes": "Clothes", "accessories": "Accessories", "transport": "Transport", "cosmetics": "Cosmetics" },
+            "buy": "Buy",
+            "owned": "Lv.",
+            "price": "Price",
+            "activeBoost": "Activate Boost" },
+  "ach": { "locked": "Hidden", "reward": "Reward" },
+  "settings": {
+    "sound": "Sound",
+    "animations": "Animations",
+    "highContrast": "High Contrast",
+    "language": "Language",
+    "save": "Save",
+    "export": "Export JSON",
+    "import": "Import JSON",
+    "reset": "Reset Progress",
+    "hint": "Export downloads your save. Import restores from file."
+  },
+  "footer": { "hint": "Tip: press Space/Enter to click. Holding does not speed up." }
+}
