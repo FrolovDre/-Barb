@@ -1,0 +1,14 @@
+{
+  "achievements": [
+    { "key": "first_look", "name": {"ru": "Первый образ", "en": "First Look"}, "desc": {"ru": "Купите 3 предмета из разных категорий.", "en": "Buy 3 items from different categories."}, "condition": {"type": "buyDistinct", "count": 3}, "reward": {"perClickAdd": 1} },
+    { "key": "gloss_magnate", "name": {"ru": "Глянец-магнат", "en": "Gloss Magnate"}, "desc": {"ru": "Накопите 100 000 Сияния суммарно.", "en": "Accumulate 100,000 total Glow."}, "condition": {"type": "totalGlow", "value": 100000}, "reward": {"perSecondAdd": 3} },
+    { "key": "lightspeed", "name": {"ru": "Скорость света", "en": "Lightspeed"}, "desc": {"ru": "Заполните поездку < 2 минут с начала цикла.", "en": "Finish a trip in under 2 minutes."}, "condition": {"type": "tripTimeLess", "seconds": 120}, "reward": {"tripSpeedMult": 0.05} },
+    { "key": "collector", "name": {"ru": "Коллекционер", "en": "Collector"}, "desc": {"ru": "Откройте 10 уникальных предметов.", "en": "Own 10 unique items."}, "condition": {"type": "uniqueItems", "count": 10}, "reward": {"perClickMult": 0.05} },
+    { "key": "event_hunter", "name": {"ru": "Ивент-хантер", "en": "Event Hunter"}, "desc": {"ru": "Активируйте 20 событий.", "en": "Activate 20 events."}, "condition": {"type": "eventsActivated", "count": 20}, "reward": {"eventChance": 0.003} },
+    { "key": "ride_5", "name": {"ru": "Пилот заезда", "en": "Ride Pilot"}, "desc": {"ru": "Завершите 5 поездок.", "en": "Complete 5 trips."}, "condition": {"type": "tripsCompleted", "count": 5}, "reward": {"perSecondAdd": 2} },
+    { "key": "ride_15", "name": {"ru": "Гонщица", "en": "Racer"}, "desc": {"ru": "Завершите 15 поездок.", "en": "Complete 15 trips."}, "condition": {"type": "tripsCompleted", "count": 15}, "reward": {"perClickAdd": 2} },
+    { "key": "spender", "name": {"ru": "Шопоголик", "en": "Shopper"}, "desc": {"ru": "Потратьте 10 000 Сияния.", "en": "Spend 10,000 Glow."}, "condition": {"type": "spentGlow", "value": 10000}, "reward": {"shopDiscount": 0.05} },
+    { "key": "boost_love", "name": {"ru": "Любитель бустов", "en": "Boost Lover"}, "desc": {"ru": "Активируйте 10 бустов.", "en": "Use 10 boosts."}, "condition": {"type": "boostsUsed", "count": 10}, "reward": {"boostDurationMult": 0.1} },
+    { "key": "no_shoes_rain", "name": {"ru": "Танец под дождём", "en": "Dancing in Rain"}, "desc": {"ru": "Завершите поездку во время события «Дождь».", "en": "Finish a trip during the Rain event."}, "condition": {"type": "tripDuringEvent", "eventKey": "rain"}, "reward": {"perSecondAdd": 1} }
+  ]
+}
