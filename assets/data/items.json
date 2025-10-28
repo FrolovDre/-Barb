@@ -1,0 +1,12 @@
+{
+  "items": [
+    { "key": "dress_spark", "category": "clothes", "name": {"ru": "Платье «Искра»", "en": "Spark Dress"}, "desc": {"ru": "Добавляет сияние за клик.", "en": "Adds glow per click."}, "basePrice": 10, "maxLevel": 50, "effects": {"perClickAdd": 1, "perClickMult": 0.02} },
+    { "key": "heels_glide", "category": "clothes", "name": {"ru": "Туфли «Скользящая походка»", "en": "Glide Heels"}, "desc": {"ru": "Немного ускоряют поездку.", "en": "Slightly speed up the trip."}, "basePrice": 35, "maxLevel": 40, "effects": {"tripSpeedMult": 0.03} },
+    { "key": "bag_gloss", "category": "accessories", "name": {"ru": "Сумка «Глянец»", "en": "Gloss Bag"}, "desc": {"ru": "Чуть повышает шанс события.", "en": "Slightly increases event chance."}, "basePrice": 50, "maxLevel": 20, "effects": {"eventChance": 0.002} },
+    { "key": "shades_star", "category": "accessories", "name": {"ru": "Очки «Звезда»", "en": "Star Shades"}, "desc": {"ru": "Продлевает действие бустов.", "en": "Extends boost durations."}, "basePrice": 90, "maxLevel": 15, "effects": {"boostDurationMult": 0.05} },
+    { "key": "scooter_cute", "category": "transport", "name": {"ru": "Самокат «Мимишный»", "en": "Cute Scooter"}, "desc": {"ru": "Повышает скорость поездки и доход в секунду.", "en": "Trip speed and glow per second."}, "basePrice": 120, "maxLevel": 25, "effects": {"tripSpeedMult": 0.06, "perSecondAdd": 0.5} },
+    { "key": "cabrio_breeze", "category": "transport", "name": {"ru": "Кабриолет «Бриз»", "en": "Breeze Cabrio"}, "desc": {"ru": "Серьёзный прирост скорости и пассивного дохода.", "en": "Strong speed & passive income."}, "basePrice": 600, "maxLevel": 20, "effects": {"tripSpeedMult": 0.12, "perSecondAdd": 2} },
+    { "key": "limo_lux", "category": "transport", "name": {"ru": "Лимузин «Люкс»", "en": "Lux Limo"}, "desc": {"ru": "Мощный прирост скорости и пассивного дохода.", "en": "Big speed & passive income."}, "basePrice": 2500, "maxLevel": 10, "effects": {"tripSpeedMult": 0.25, "perSecondAdd": 6} },
+    { "key": "makeup_glowup", "category": "cosmetics", "name": {"ru": "Глоу-ап", "en": "Glow Up"}, "desc": {"ru": "Временный ×2 к доходу на 30с.", "en": "Temporary ×2 income for 30s."}, "basePrice": 150, "maxLevel": 5, "effects": {"activeBoost": {"type": "multIncome", "mult": 2, "duration": 30}} }
+  ]
+}
