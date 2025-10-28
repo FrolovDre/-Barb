@@ -1,0 +1,8 @@
+{
+  "events": [
+    { "key": "sale", "name": {"ru": "Фешн-распродажа", "en": "Fashion Sale"}, "chance": 0.02, "duration": 60, "cooldown": 120, "effects": {"shopDiscount": 0.2} },
+    { "key": "traffic", "name": {"ru": "Пробка", "en": "Traffic"}, "chance": 0.015, "duration": 45, "cooldown": 90, "effects": {"tripSpeedMultiplier": 0.7} },
+    { "key": "hype", "name": {"ru": "Соцсети хайп", "en": "Social Hype"}, "chance": 0.01, "duration": 30, "cooldown": 120, "effects": {"perClickMultiplier": 2} },
+    { "key": "rain", "name": {"ru": "Дождь", "en": "Rain"}, "chance": 0.012, "duration": 30, "cooldown": 120, "effects": {"shoesDisabled": true, "superEventChance": 0.15} }
+  ]
+}
